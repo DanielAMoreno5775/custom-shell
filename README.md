@@ -1,1 +1,21 @@
-# custom-shell
+# Custom Shell
+
+### Instructions to Use Program: [^1]
+1. Enter the root directory with "cd custom-shell"
+2. Compile with "make -f makefile" in root directory
+3. Execute program with "./newshell [batchfile]"
+4. Use the built-in, custom "man" command to view the internal documentation
+5. Clean up src, obj, and root directories with "make clean"
+
+
+### Organization of the Project:
+- Daniel Moreno:
+    - Worked on major2.c, aliasCmd.c, makefile, hashMap.h, hashMap.c
+	- This code was originally part of a larger group project. I have removed all code that I did not write. This is why only the alias, exit, and man commands have been implemented.
+    
+### Design Overview:
+	Within the src folder, we placed all of our .c files. Most of the files provide the functionality of a single command, such as path or cd. The hashMap.c file, paired with the hashMap.h file in the include folder, implements a custom data structure that resembles a hash map. A structure is used to store the hash map's current size, a 2-dimensional array of keys, and a 2-dimensional array of values associated with the keys at the same index. To imitate object-oriented programming, each function in that file takes a pointer to a specific hash map instance as a parameter and then operates on it. The major2.c file contains the various functions necessary to tokenize any input, perform regex checks, and evaluate the input to determine which command was specified. The main function is primarily responsible for checking the number of arguments, potentially opening the specified file, getting a line of input, calling the tokenizeString() on the input, and then passing the necessary values to the tokenInputHandler() function. The tokenizeString function evaluates the user's input, breaks it up into tokens, and stores various relevant data inside the tokenizedInputLine structure that is defined in major2.h. The tokenInputHandler function loops through all potential command tokens (tokens at the beginning of the line or the tokens immediately following a semicolon) and checks whether they are an alias. Multi-token aliases result in the function being recursively called on the alias while everything else leads to the token being evaluated to determine whether it is a valid command. Once a command is detected, major2.c will execute the command's associated code within it's distinct file and within major2.c. Only the man and exit commands reside solely within major2.c.
+
+    Due to its importance, this paragraph will be devoted to the tokenizedInputLine structure which contains 7 variables. The exitCommandExists boolean will track whether a valid exit command was detected since command detection and the exit command's functionality are split between the main, tokenizeString, and tokenInputHandler functions in major2.c. The isEmptyCommandLine boolean is used to ensure that the inputted line contains at least one alphanumeric character and must be true for that line to be evaluated, thereby preventing certain errors. The arrayOfTokens variable is an array of character pointers and stores each token that is created by the tokenizeString function. The numOfTokens integer stores the number of used entries in arrayOfTokens. The arrayOfCmdIndices variable is an array of integers, each of which is an index of a command token in arrayOfTokens. The numOfCmds integer stores the number of used entries in arrayOfCmdIndices. The initialString variable is a character pointer that points to a duplicate of the originally entered string. This ensures that the original string is still accessible and passed with the arrayOfTokens despite the destructive nature of strtok and replaceChars in the tokenizeString. The tokenizeString function first initializes all of the variables and duplicates the original input. Then, it checks whether there are any alphanumeric characters in the initial string. Next, it calls the replaceChars() function which replaces all instances of ";" with "; ", allowing cd;alias;myhistory to be a valid input. Afterwards, tokenizeString uses the strtok function and a while loop to split apart the original line at every space while removing newline characters and saving command indices. 
+
+[^1]: Remove the quotation marks in the above commands when actually running these commands in the terminal
